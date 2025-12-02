@@ -12,16 +12,31 @@ public class Program {
         Connection connection;
         connection = DriverManager.getConnection(url, username, password);
 
-        Statement statement = connection.createStatement();
+        String query = """
+                
+                SELECT title, description, release_year, length
+                FROM film
+                WHERE title LIKE ?
+                """;
+        PreparedStatement statement = connection.prepareStatement(query);
 
-        String query = " SELECT title FROM film";
+        statement.setString(1, "%AIR%");
 
-        ResultSet results = statement.executeQuery(query);
+        ResultSet results = statement.executeQuery();
 
         while (results.next()) {
-            String film = results.getString("title");
-            System.out.println(film);
+            String title = results.getString(1);
+            String description = results.getString(2);
+            int releaseYear = results.getInt(3);
+            int length = results.getInt(4);
+            System.out.println(title);
+            System.out.println(description);
+            System.out.println(releaseYear);
+            System.out.println(length);
+            System.out.println("---------------");
         }
+        results.close();
+        statement.close();
         connection.close();
     }
 }
